@@ -100,13 +100,18 @@ function createScopes(node, parent) {
         });
 
     } else if (node.type === "CatchClause") {
-        const identifier = node.param;
-
         node.$scope = new Scope({
             kind: "catch-block",
             node: node,
             parent: parent.$scope,
         });
+
+        const identifier = node.param;
+        
+        if (identifier === null) {
+            return;
+        }
+
         node.$scope.add(identifier.name, "caught", identifier, null);
 
         // All hoist-scope keeps track of which variables that are propagated through,
