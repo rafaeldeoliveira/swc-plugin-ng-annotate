@@ -107,24 +107,20 @@ function createScopes(node, parent) {
         });
 
         const identifier = node.param;
-        
-        if (identifier === null) {
-            return;
+        if (identifier !== null) {
+            node.$scope.add(identifier.name, "caught", identifier, null);
+
+            // All hoist-scope keeps track of which variables that are propagated through,
+            // i.e. an reference inside the scope points to a declaration outside the scope.
+            // This is used to mark "taint" the name since adding a new variable in the scope,
+            // with a propagated name, would change the meaning of the existing references.
+            //
+            // catch(e) is special because even though e is a variable in its own scope,
+            // we want to make sure that catch(e){let e} is never transformed to
+            // catch(e){var e} (but rather var e$0). For that reason we taint the use of e
+            // in the closest hoist-scope, i.e. where var e$0 belongs.
+            node.$scope.closestHoistScope().markPropagates(identifier.name);
         }
-
-        node.$scope.add(identifier.name, "caught", identifier, null);
-
-        // All hoist-scope keeps track of which variables that are propagated through,
-        // i.e. an reference inside the scope points to a declaration outside the scope.
-        // This is used to mark "taint" the name since adding a new variable in the scope,
-        // with a propagated name, would change the meaning of the existing references.
-        //
-        // catch(e) is special because even though e is a variable in its own scope,
-        // we want to make sure that catch(e){let e} is never transformed to
-        // catch(e){var e} (but rather var e$0). For that reason we taint the use of e
-        // in the closest hoist-scope, i.e. where var e$0 belongs.
-        node.$scope.closestHoistScope().markPropagates(identifier.name);
-
     } else if (node.type === "Program") {
         // Top-level program is a scope
         // There's no block-scope under it
