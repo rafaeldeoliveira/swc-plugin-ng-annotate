@@ -62,6 +62,8 @@
  * Added a `acornOptions` option to the API, to allow overriding or passing
    extra options to acorn.
 
+---
+
 ## v1.2.1 2016-01-10
  * bugfix case where $inject arrays were incorrectly hoisted
  * angular-dashboard-framework optional: match apply
