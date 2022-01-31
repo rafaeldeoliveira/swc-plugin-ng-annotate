@@ -1069,3 +1069,13 @@ const copyObj = { ...obj };
 async function foo(foo) {
     await bar();
 }
+
+// issue #21 - try catch without an argument
+// @ngInject
+export function trycatch(foo) {
+    try {
+        foo();
+    } catch {
+        // empty
+    }
+}
