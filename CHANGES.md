@@ -1,3 +1,8 @@
+## 1.14.0 2022-01-31
+* Added support for ES2019 Optional `catch` binding (`try {} catch {}`).
+* Allowed `commander` dependency >=6,<=9.
+* Updated dependencies.
+
 ## 1.13.0 2020-11-26
 * Updated acorn from version 7 to version 8.
 * Changed the default acorn `ecmaVersion` from 11 to "latest".
