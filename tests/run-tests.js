@@ -10,7 +10,7 @@ const fs = require("fs");
 const os = require("os");
 const diff = require("diff");
 const SourceMapConsumer = require("source-map").SourceMapConsumer;
-const coffee = require("coffee-script");
+const coffee = require("coffeescript");
 const convertSourceMap = require("convert-source-map");
 
 // optionals
