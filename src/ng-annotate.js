@@ -30,6 +30,7 @@ const program = new commander.Command()
     .option("--list", "list all optional names")
     .option("--stats", "print statistics on stderr (experimental)")
     .parse(process.argv);
+const opts = program.opts();
 
 function exit(msg) {
     if (msg) {
@@ -40,7 +41,7 @@ function exit(msg) {
 }
 
 // special-case for --list
-if (program.list) {
+if (opts.list) {
     const list = ngAnnotate("", {list: true}).list;
     if (list.length >= 1) {
         process.stdout.write(list.join("\n") + "\n");
@@ -54,7 +55,7 @@ if (program.args.length !== 1) {
     exit("error: no input file provided");
 }
 
-if (!program.add && !program.remove) {
+if (!opts.add && !opts.remove) {
     program.outputHelp();
     exit("error: missing option --add and/or --remove");
 }
@@ -104,13 +105,13 @@ function runAnnotate(err, src) {
     }
 
     for (const opt of ["add", "remove", "o", "regexp", "rename", "single_quotes", "plugin", "enable", "stats"]) {
-        if (opt in program) {
-            config[opt] = program[opt];
+        if (opt in opts) {
+            config[opt] = opts[opt];
         }
     }
 
-    if (program.sourcemap) {
-        config.map = { inline: true, sourceRoot: program.sourceroot };
+    if (opts.sourcemap) {
+        config.map = { inline: true, sourceRoot: opts.sourceroot };
         if (filename !== "-") {
             config.map.inFile = filename;
         }
