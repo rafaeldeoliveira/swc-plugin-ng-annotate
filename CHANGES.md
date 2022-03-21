@@ -1,3 +1,7 @@
+## 1.14.1 2022-03-21
+* Fixed `ng-annotate-patched` command-line parsing when using dependency
+  `commander >= 7.0.0`.
+
 ## 1.14.0 2022-01-31
 * Added support for ES2019 Optional `catch` binding (`try {} catch {}`).
 * Allowed `commander` dependency >=6,<=9.
