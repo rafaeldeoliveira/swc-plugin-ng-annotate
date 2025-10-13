@@ -193,6 +193,12 @@ function run(ngAnnotate) {
     const es6ClassesAnnotated = ngAnnotate(es6Classes, {add: true}).src;
     test(slurp("tests/es6-classes.annotated.js"), es6ClassesAnnotated, "tests/es6-classes.annotated.js");
 
+    // support for object methods
+    console.log("testing object methods");
+    const objectMethods = slurp("tests/object-methods.js");
+    const objectMethodsAnnotated = ngAnnotate(objectMethods, {add: true}).src;
+    test(slurp("tests/object-methods.annotated.js"), objectMethodsAnnotated, "tests/object-methods.annotated.js");
+
     console.log("testing performance");
     const ng1 = String(fs.readFileSync("tests/angular.js"));
     // const ng5 = ng1 + ng1 + ng1 + ng1 + ng1;

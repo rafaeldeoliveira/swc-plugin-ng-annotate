@@ -473,11 +473,15 @@ function stringify(ctx, arr, quot) {
 
 function insertArray(ctx, functionExpression, positioningNode, fragments, quot) {
     const args = stringify(ctx, functionExpression.params, quot);
+    // method in object literal, e.g. { foo($q) { ... } }
+    const isMethodDefinition = functionExpression.$parent && functionExpression.$parent.type === "Property" && functionExpression.$parent.method
 
     fragments.push({
         start: positioningNode.range[0],
         end: positioningNode.range[0],
-        str: args.slice(0, -1) + ", ",
+        str: isMethodDefinition
+            ? ": " + args.slice(0, -1) + ", function"
+            : args.slice(0, -1) + ", ",
         loc: {
             start: positioningNode.loc.start,
             end: positioningNode.loc.start
