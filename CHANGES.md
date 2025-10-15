@@ -1,3 +1,7 @@
+## 1.15.0 2025-10-15
+* Support for method definitions in object literals.
+* Support `commander` versions up to 14.
+
 ## 1.14.1 2022-03-21
 * Fixed `ng-annotate-patched` command-line parsing when using dependency
   `commander >= 7.0.0`.
