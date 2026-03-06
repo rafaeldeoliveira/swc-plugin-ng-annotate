@@ -1,6 +1,6 @@
 {
   "name": "swc-plugin-ng-annotate",
-  "version": "2.0.0",
+  "version": "0.0.1",
   "description": "add, remove and rebuild angularjs dependency injection annotations (swc-plugin)",
   "main": "swc_plugin_ng_annotate.wasm",
    "files": [
@@ -31,6 +31,10 @@
     "test": "cargo test",
     "build": "cargo build --target wasm32-wasip1 --release && cp target/wasm32-wasip1/release/swc_plugin_ng_annotate.wasm ."
   },
-  "author": "Olov Lassus <olov.lassus@gmail.com>",
+  "author": "Rafael de Oliveira <rafael@oliveira.dev>",
+  "contributors": [
+    "Ran Benita <ran@unusedvar.com> (ng-annotate-patched fork)",
+    "Olov Lassus <olov.lassus@gmail.com> (original ng-annotate)"
+  ],
   "license": "MIT"
 }
