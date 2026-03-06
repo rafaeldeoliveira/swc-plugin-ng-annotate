@@ -3,3 +3,4 @@ node_modules/
 *~
 target/
 .claude/
+swc_plugin_ng_annotate.wasm
