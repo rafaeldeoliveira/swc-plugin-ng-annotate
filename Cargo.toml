@@ -1,0 +1,34 @@
+[package]
+name = "swc-plugin-ng-annotate"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+swc_core = { version = "58", features = [
+    "ecma_plugin_transform",
+    "ecma_ast",
+    "ecma_visit",
+    "ecma_utils",
+    "common",
+] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
+
+[dev-dependencies]
+swc_core = { version = "58", features = [
+    "ecma_plugin_transform",
+    "ecma_ast",
+    "ecma_visit",
+    "ecma_utils",
+    "common",
+    "ecma_parser",
+    "testing_transform",
+] }
+
+[profile.release]
+lto = true
+opt-level = "z"
