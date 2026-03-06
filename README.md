@@ -34,7 +34,7 @@ All options are passed as the second element of the plugin tuple.
 | `singleQuotes` | `boolean` | `false` | Use single quotes in generated `$inject` arrays instead of double quotes |
 | `regexp` | `string` | `null` | Only annotate Angular modules whose name matches this regexp (e.g. `"^myApp"`) |
 | `rename` | `{from, to}[]` | `null` | Rename injected identifiers in the generated annotation arrays |
-| `enable` | `string[]` | `null` | Enable optional matchers (see below) |
+
 
 ### Modes
 
@@ -162,7 +162,7 @@ The plugin is built against a specific version of `swc_core`. It must match the 
 
 | swc-plugin-ng-annotate | swc_core |
 |------------------------|----------|
-| `2.0.0` | `58` |
+| `0.0.1` | `58` |
 
 
 ---
