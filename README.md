@@ -1,3 +1,177 @@
+# swc-plugin-ng-annotate
+
+A [SWC](https://swc.rs/) WASM plugin that adds, removes, and rebuilds AngularJS dependency injection annotations. Drop-in replacement for ng-annotate in modern build pipelines (Rspack, webpack + swc-loader, SWC CLI).
+
+## Installation
+
+```bash
+npm install --save-dev swc-plugin-ng-annotate
+```
+
+## Quick start
+
+```json
+// .swcrc
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        ["swc-plugin-ng-annotate", { "add": true }]
+      ]
+    }
+  }
+}
+```
+
+## Configuration
+
+All options are passed as the second element of the plugin tuple.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `add` | `boolean` | `false` | Add `$inject` annotations to unannotated functions |
+| `remove` | `boolean` | `false` | Remove existing `$inject` annotations |
+| `singleQuotes` | `boolean` | `false` | Use single quotes in generated `$inject` arrays instead of double quotes |
+| `regexp` | `string` | `null` | Only annotate Angular modules whose name matches this regexp (e.g. `"^myApp"`) |
+| `rename` | `{from, to}[]` | `null` | Rename injected identifiers in the generated annotation arrays |
+| `enable` | `string[]` | `null` | Enable optional matchers (see below) |
+
+### Modes
+
+The `add` and `remove` flags combine into three modes:
+
+| `add` | `remove` | Mode | Effect |
+|-------|----------|------|--------|
+| `true` | `false` | **Add** | Insert missing `$inject` arrays |
+| `false` | `true` | **Remove** | Strip all `$inject` arrays |
+| `true` | `true` | **Rebuild** | Replace existing `$inject` arrays with freshly computed ones |
+
+At least one of `add` or `remove` must be `true`, otherwise the plugin is a no-op.
+
+### `regexp`
+
+Restricts implicit matching to Angular modules whose name matches the given regexp string. Functions annotated with explicit `/* @ngInject */` are always processed regardless of this option.
+
+```json
+["swc-plugin-ng-annotate", { "add": true, "regexp": "^myApp" }]
+```
+
+### `rename`
+
+Renames identifiers in the generated `$inject` string arrays. Useful when your minifier renames parameters and you need the injected names to match a mapping.
+
+```json
+["swc-plugin-ng-annotate", {
+  "add": true,
+  "rename": [
+    { "from": "$scope",  "to": "s" },
+    { "from": "$http",   "to": "h" }
+  ]
+}]
+```
+
+Output: `MyCtrl.$inject = ["s", "h"]`
+
+
+
+--
+## Build tool setup
+
+### Rspack
+
+```js
+// rspack.config.js
+module.exports = {
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: "builtin:swc-loader",
+      options: {
+        jsc: {
+          experimental: {
+            plugins: [
+              ["swc-plugin-ng-annotate", { "add": true }]
+            ]
+          }
+        }
+      }
+    }]
+  }
+};
+```
+
+### Webpack with swc-loader
+
+```bash
+npm install --save-dev swc-loader @swc/core
+```
+
+```js
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: "swc-loader",
+        options: {
+          jsc: {
+            experimental: {
+              plugins: [
+                ["swc-plugin-ng-annotate", { "add": true }]
+              ]
+            }
+          }
+        }
+      }
+    }]
+  }
+};
+```
+
+### SWC CLI
+
+```bash
+npm install --save-dev @swc/cli @swc/core
+```
+
+```json
+// .swcrc
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        ["swc-plugin-ng-annotate", { "add": true }]
+      ]
+    }
+  }
+}
+```
+
+```bash
+npx swc src/ -d dist/
+```
+
+---
+
+## Version compatibility
+
+The plugin is built against a specific version of `swc_core`. It must match the SWC version bundled by your build tool.
+
+| swc-plugin-ng-annotate | swc_core |
+|------------------------|----------|
+| `2.0.0` | `58` |
+
+
+---
+
+
+### Below is the ng-annotate-patched original README.
+
+
+
 # Fork details
 
 ng-annotate-patched is a fork of [ng-annotate](https://github.com/olov/ng-annotate).
