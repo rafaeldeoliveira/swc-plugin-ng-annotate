@@ -3,17 +3,15 @@
   "version": "0.0.1",
   "description": "add, remove and rebuild angularjs dependency injection annotations (swc-plugin)",
   "main": "swc_plugin_ng_annotate.wasm",
-   "files": [
+  "files": [
     "swc_plugin_ng_annotate.wasm"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/rafaeldeoliveira/swc-plugin-ng-annotate.git"
+    "url": "git+https://github.com/rafaeldeoliveira/swc-plugin-ng-annotate.git"
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "keywords": [
     "angular",
     "angularjs",
