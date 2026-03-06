@@ -5,6 +5,11 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
+path = "swc-plugin/src/lib.rs"
+
+[[test]]
+name = "fixture"
+path = "swc-plugin/tests/fixture.rs"
 
 [dependencies]
 swc_core = { version = "58", features = [

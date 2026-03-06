@@ -8,7 +8,7 @@ use swc_plugin_ng_annotate::{NgAnnotateVisitor, PluginConfig};
 
 fn fixture_dir(name: &str) -> (PathBuf, PathBuf) {
     let base = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixture")
+        .join("swc-plugin/tests/fixture")
         .join(name);
     (base.join("input.js"), base.join("output.js"))
 }
