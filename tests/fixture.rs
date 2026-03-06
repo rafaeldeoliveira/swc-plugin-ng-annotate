@@ -150,3 +150,21 @@ fn has_inject_remove() {
         visit_mut_pass(NgAnnotateVisitor::with_comments(remove_config(), Some(c)))
     }, &input, &output, Default::default());
 }
+
+#[test]
+fn block_comment_inject() {
+    let (input, output) = fixture_dir("block_comment_inject");
+    test_fixture(syntax(), &|t| {
+        let c: Rc<dyn Comments> = t.comments.clone();
+        visit_mut_pass(NgAnnotateVisitor::with_comments(add_config(), Some(c)))
+    }, &input, &output, Default::default());
+}
+
+#[test]
+fn module_exports() {
+    let (input, output) = fixture_dir("module_exports");
+    test_fixture(syntax(), &|t| {
+        let c: Rc<dyn Comments> = t.comments.clone();
+        visit_mut_pass(NgAnnotateVisitor::with_comments(add_config(), Some(c)))
+    }, &input, &output, FixtureTestConfig { module: Some(true), ..Default::default() });
+}

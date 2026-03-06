@@ -1,3 +1,5 @@
+use std::rc::Rc;
+use swc_core::common::comments::Comments;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
@@ -27,7 +29,14 @@ pub fn ng_annotate_plugin(
         return program;
     }
 
-    let mut visitor = NgAnnotateVisitor::new(config);
+    // Pass the host's comment proxy so @ngInject comment detection works in
+    // the WASM plugin context (the global COMMENTS thread-local is not set
+    // by bundlers like Rspack/webpack when calling plugins).
+    let comments: Option<Rc<dyn Comments>> = metadata
+        .comments
+        .map(|c| Rc::new(c) as Rc<dyn Comments>);
+
+    let mut visitor = NgAnnotateVisitor::with_comments(config, comments);
     program.visit_mut_with(&mut visitor);
     program
 }

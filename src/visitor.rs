@@ -536,7 +536,16 @@ impl VisitMut for NgAnnotateVisitor {
         decl.visit_mut_children_with(self);
 
         let decl_lo = decl.span.lo.0;
-        if self.is_ng_inject_explicit(decl_lo) {
+        // Also check init expression's BytePos for inline `/* @ngInject */` placed
+        // between `=` and the function/arrow: `var x = /* @ngInject */ function() {}`
+        let init_lo = decl.init.as_ref().and_then(|init| match init.as_ref() {
+            Expr::Fn(f) => Some(f.function.span.lo.0),
+            Expr::Arrow(a) => Some(a.span.lo.0),
+            _ => None,
+        });
+        let is_explicit = self.is_ng_inject_explicit(decl_lo)
+            || init_lo.map_or(false, |lo| self.is_ng_inject_explicit(lo));
+        if is_explicit {
             if let Pat::Ident(id) = &decl.name {
                 let name = id.sym.to_string();
                 let params_opt = decl.init.as_ref().and_then(|init| match init.as_ref() {
