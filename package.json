@@ -1,6 +1,6 @@
 {
   "name": "swc-plugin-ng-annotate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "add, remove and rebuild angularjs dependency injection annotations (swc-plugin)",
   "main": "swc_plugin_ng_annotate.wasm",
   "files": [
