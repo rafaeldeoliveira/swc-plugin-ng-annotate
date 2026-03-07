@@ -8,24 +8,24 @@
     }
     /** @ngInject */ class ClassTest1_annotated {
         constructor($log){}
+        static $inject = [
+            "$log"
+        ];
     }
-    ClassTest1_annotated.$inject = [
-        "$log"
-    ];
     class ClassTest1_annotated_constructor {
         /** @ngInject */ constructor($log){}
+        static $inject = [
+            "$log"
+        ];
     }
-    ClassTest1_annotated_constructor.$inject = [
-        "$log"
-    ];
     class ClassTest1_prologue_directive {
         constructor($log){
             "ngInject";
         }
+        static $inject = [
+            "$log"
+        ];
     }
-    ClassTest1_prologue_directive.$inject = [
-        "$log"
-    ];
     let ClassTest2 = class {
         constructor($log){}
     };
@@ -34,8 +34,18 @@
     };
     /** @ngInject */ let ClassTest2_annotated = class {
         constructor($log){}
+        static $inject = [
+            "$log"
+        ];
     };
-    ClassTest2_annotated.$inject = [
-        "$log"
-    ];
+    // Anonymous class expression as object property value
+    var component = {
+        controller: class {
+            /* @ngInject */ constructor($element, $log){}
+            static $inject = [
+                "$element",
+                "$log"
+            ];
+        }
+    };
 })();

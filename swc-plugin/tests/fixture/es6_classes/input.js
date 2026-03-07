@@ -33,4 +33,12 @@
     let ClassTest2_annotated = class {
         constructor($log) {}
     };
+
+    // Anonymous class expression as object property value
+    var component = {
+        controller: class {
+            /* @ngInject */
+            constructor($element, $log) {}
+        }
+    };
 })();

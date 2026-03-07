@@ -541,7 +541,9 @@ impl<'a> Visit for Scanner<'a> {
     fn visit_fn_expr(&mut self, fn_expr: &FnExpr) {
         let result = check_fn_expr_for_ng_directive(fn_expr);
         let result = if result == NgInjectResult::None {
-            check_ng_inject_comment_at(fn_expr.function.span.lo.0, self.comments_ref())
+            let r = check_ng_inject_comment_at(fn_expr.function.span.lo.0, self.comments_ref());
+            // Also check at the containing statement (e.g. `/* @ngInject */\nexport default function Foo()`)
+            if r != NgInjectResult::None { r } else { check_ng_inject_comment_at(self.current_stmt_lo, self.comments_ref()) }
         } else { result };
 
         if result == NgInjectResult::Inject {
@@ -639,6 +641,32 @@ impl<'a> Visit for Scanner<'a> {
         }
 
         decl.visit_children_with(self);
+    }
+
+    fn visit_class_expr(&mut self, class_expr: &ClassExpr) {
+        // Add named class expressions to decl_map for reference following
+        if let Some(ident) = &class_expr.ident {
+            let name = ident.sym.to_string();
+            let params = extract_class_constructor_params(&class_expr.class);
+            let stmt_lo = self.current_stmt_lo;
+            self.ctx.decl_map.insert(
+                name.clone(),
+                DeclInfo { params, stmt_lo, name: name.clone(), decl_kind: DeclKind::FnDecl },
+            );
+        }
+
+        let result = check_class_for_ng_directive(&class_expr.class, self.comments_ref());
+        let result = if result == NgInjectResult::None {
+            let r = check_ng_inject_comment_at(class_expr.class.span.lo.0, self.comments_ref());
+            if r != NgInjectResult::None { r } else { check_ng_inject_comment_at(self.current_stmt_lo, self.comments_ref()) }
+        } else { result };
+
+        if result == NgInjectResult::Inject {
+            let lo = class_expr.class.span.lo.0;
+            self.handle_ng_inject_explicit(lo, false);
+        }
+
+        class_expr.visit_children_with(self);
     }
 
     fn visit_class_decl(&mut self, class_decl: &ClassDecl) {

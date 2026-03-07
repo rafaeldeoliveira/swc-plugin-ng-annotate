@@ -70,8 +70,11 @@ pub fn replace_annotation_array_strings(
 }
 
 /// Create a `name.$inject = [...]` expression statement.
+/// If `ident` is provided (with its original SyntaxContext), it is used directly so that
+/// SWC's rename pass can track it when the outer binding is renamed (e.g. arrow-to-named-fn).
 pub fn make_inject_stmt(
     name: &str,
+    ident: Option<Ident>,
     params: &[String],
     rename_map: &HashMap<String, String>,
 ) -> Stmt {
@@ -87,9 +90,12 @@ pub fn make_inject_stmt(
     });
 
     // Build name.$inject = [...]
+    // Use the original ident (with SyntaxContext) when available so that SWC's
+    // rename pass will also rename this reference when it renames the binding.
+    let obj_ident = ident.unwrap_or_else(|| make_ident(name));
     let lhs = MemberExpr {
         span: DUMMY_SP,
-        obj: Box::new(Expr::Ident(make_ident(name))),
+        obj: Box::new(Expr::Ident(obj_ident)),
         prop: MemberProp::Ident(make_ident_name("$inject")),
     };
 
@@ -158,6 +164,66 @@ fn reconstruct_member_name(expr: &Expr) -> Option<String> {
         }
         _ => None,
     }
+}
+
+/// Create a `static $inject = ["$a", "$b", ...]` class property.
+pub fn make_static_inject_prop(
+    params: &[String],
+    rename_map: &HashMap<String, String>,
+) -> ClassMember {
+    let elems: Vec<Option<ExprOrSpread>> = params
+        .iter()
+        .map(|p| Some(to_expr_or_spread(make_str_lit(&renamed(p, rename_map)))))
+        .collect();
+
+    let array_expr = Expr::Array(ArrayLit {
+        span: DUMMY_SP,
+        elems,
+    });
+
+    ClassMember::ClassProp(ClassProp {
+        span: DUMMY_SP,
+        key: PropName::Ident(make_ident_name("$inject")),
+        value: Some(Box::new(array_expr)),
+        type_ann: None,
+        is_static: true,
+        decorators: vec![],
+        accessibility: None,
+        is_abstract: false,
+        is_optional: false,
+        is_override: false,
+        readonly: false,
+        declare: false,
+        definite: false,
+    })
+}
+
+/// Check if a class already has a `static $inject = [...]` class property.
+pub fn class_has_static_inject(class: &Class) -> bool {
+    class.body.iter().any(|member| {
+        if let ClassMember::ClassProp(prop) = member {
+            if prop.is_static {
+                if let PropName::Ident(id) = &prop.key {
+                    return id.sym.as_ref() == "$inject";
+                }
+            }
+        }
+        false
+    })
+}
+
+/// Remove `static $inject = [...]` from a class body if present.
+pub fn remove_static_inject_from_class(class: &mut Class) {
+    class.body.retain(|member| {
+        if let ClassMember::ClassProp(prop) = member {
+            if prop.is_static {
+                if let PropName::Ident(id) = &prop.key {
+                    return id.sym.as_ref() != "$inject";
+                }
+            }
+        }
+        true
+    });
 }
 
 /// Convert a shorthand method property to a key-value property with an array literal.

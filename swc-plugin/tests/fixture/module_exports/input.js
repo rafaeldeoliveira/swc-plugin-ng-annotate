@@ -16,3 +16,28 @@ export /* @ngInject */ function OtherController($scope, $uiRouter) {
 export class SanityController {
     constructor($scope) {}
 }
+
+// Case 4: export default with /* @ngInject */ before function name
+export default /* @ngInject */ function SomeConfig($translateProvider, $translatePartialLoaderProvider) {
+    $translatePartialLoaderProvider.addPart('SamplePart');
+};
+
+// Case 5: /* @ngInject */ on the line before export default function
+/* @ngInject */
+export default function OtherConfig($translatePartialLoaderProvider) {
+    $translatePartialLoaderProvider.addPart('OtherPart');
+}
+
+// Case 6: export default class with /* @ngInject */ on the constructor
+export default class SomeControllerClass {
+    /* @ngInject */
+    constructor($log, $rootScope) {
+        this.$log = $log;
+    }
+}
+
+// Case 7: export default anonymous function (no name, must use array annotation)
+/* @ngInject */
+export default function ($translateProvider, $translatePartialLoaderProvider) {
+    $translatePartialLoaderProvider.addPart('Anonymous');
+}
